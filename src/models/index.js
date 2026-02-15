@@ -7,15 +7,14 @@ const Order = require("./Order");
 User.hasMany(Order);
 Order.belongsTo(User);
 
-Restaurant.hasMany(Product);
-Product.belongsTo(Restaurant);
+Restaurant.hasMany(Product, { foreignKey: "restaurantId", as: "products" });
+Product.belongsTo(Restaurant, { foreignKey: "restaurantId" });
 
 const initDb = async () => {
   try {
     await sequelize.authenticate();
     console.log("✅ Connection to Postgres has been established successfully.");
 
-    
     await sequelize.sync({ alter: true });
     console.log("✅ All models were synchronized successfully.");
   } catch (error) {

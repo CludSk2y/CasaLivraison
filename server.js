@@ -1,4 +1,4 @@
-const app = require("./src/app"); 
+const app = require("./src/app");
 const { initDb } = require("./src/models/index");
 
 const PORT = process.env.PORT || 5000;
