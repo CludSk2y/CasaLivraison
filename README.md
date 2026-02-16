@@ -30,9 +30,6 @@ Spin up the entire stack including the PostgreSQL database:
 ```bash
 docker-compose up -d
 2. Database Synchronization
-Apply migrations to ensure your local schema matches the production-ready structure:
-
-Bash
 npx sequelize-cli db:migrate
 📡 API Roadmap
 [x] Authentication: JWT-based Login/Signup.
