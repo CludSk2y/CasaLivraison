@@ -4,14 +4,14 @@
 
 ## 🏗️ System Architecture
 
-### 🖥️ Backend (The Engine)
+### 🖥️ Backend 
 Built with a focus on data integrity and clear business logic.
 * **Architecture:** MVC (Model-View-Controller) Pattern.
 * **ORM:** Sequelize for complex relationships (Orders ↔ OrderItems ↔ Products).
 * **Data Integrity:** Automated Migrations to track schema changes (e.g., adding dynamic delivery addresses).
 * **Logic:** Custom utility for real-time total calculation based on dynamic cart items.
 
-### 📱 Mobile (The Experience - Coming Soon)
+### 📱 Mobile 
 The mobile client is designed for seamless user interaction.
 * **Tech:** React Native / Expo (Planned).
 * **Features:** Real-time Order Tracking, Restaurant Discovery, and Order History.
