@@ -2,8 +2,7 @@ const express = require("express");
 const router = express.Router();
 const restaurantController = require("../controllers/restaurantController");
 
-router.get("/", restaurantController.getRestaurants);
 
-router.get("/storia/menu", restaurantController.getMenuByCategory);
+router.get("/storia/menu", restaurantController.getMenu);
 
 module.exports = router;

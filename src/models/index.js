@@ -3,12 +3,20 @@ const User = require("./User");
 const Product = require("./Product");
 const Restaurant = require("./Restaurant");
 const Order = require("./Order");
+const OrderItem = require("./OrderItem"); 
 
 User.hasMany(Order);
 Order.belongsTo(User);
 
 Restaurant.hasMany(Product, { foreignKey: "restaurantId", as: "products" });
 Product.belongsTo(Restaurant, { foreignKey: "restaurantId" });
+
+Order.belongsToMany(Product, { through: OrderItem });
+Product.belongsToMany(Order, { through: OrderItem });
+
+Order.hasMany(OrderItem);
+OrderItem.belongsTo(Order);
+OrderItem.belongsTo(Product);
 
 const initDb = async () => {
   try {
@@ -28,5 +36,6 @@ module.exports = {
   Product,
   Restaurant,
   Order,
+  OrderItem, 
   initDb,
 };

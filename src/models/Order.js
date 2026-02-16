@@ -11,6 +11,10 @@ const Order = sequelize.define("Order", {
     type: DataTypes.FLOAT,
     allowNull: false,
   },
+  address: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   status: {
     type: DataTypes.ENUM("pending", "preparing", "delivered", "cancelled"),
     defaultValue: "pending",

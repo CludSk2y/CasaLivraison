@@ -1,53 +1,48 @@
-const { Order } = require("../models");
+const { Order, OrderItem, Product } = require("../models");
+const calculateTotal = require("../utils/calculateTotal"); 
 
 exports.createOrder = async (req, res) => {
   try {
-    const { totalAmount } = req.body;
-    const userId = req.user.id;
+    const { items, address } = req.body;
+    const userId = req.user.id; 
 
-    if (!userId) {
-      return res.status(400).json({ message: "User ID is required" });
+    let orderItemsData = [];
+    let itemsForCalc = [];
+
+    for (const item of items) {
+      const product = await Product.findByPk(item.id);
+      if (!product)
+        return res.status(404).json({ message: "Product not found" });
+
+      itemsForCalc.push({ price: product.price, quantity: item.quantity });
+
+      orderItemsData.push({
+        ProductId: product.id,
+        quantity: item.quantity,
+        price: product.price,
+      });
     }
+
+    const { subtotal, deliveryFee, total } = calculateTotal(itemsForCalc);
 
     const order = await Order.create({
       UserId: userId,
-      totalAmount,
+      totalAmount: total,
+      address,
       status: "pending",
     });
 
-    res.status(201).json({ order });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
+    const finalItems = orderItemsData.map((item) => ({
+      ...item,
+      OrderId: order.id,
+    }));
+    await OrderItem.bulkCreate(finalItems);
 
-exports.updateOrderStatus = async (req, res) => {
-  try {
-    const { orderId } = req.params;
-    const { status } = req.body;
-
-    const order = await Order.findByPk(orderId);
-
-    if (!order) {
-      return res.status(404).json({ message: "Order not found" });
-    }
-
-    order.status = status;
-    await order.save();
-
-    res.status(200).json({ order });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-exports.getUserOrders = async (req, res) => {
-  try {
-    const orders = await Order.findAll({
-      where: { UserId: req.user.id },
-      order: [["createdAt", "DESC"]],
+    res.status(201).json({
+      message: "Order confirmed! 🚀",
+      orderId: order.id,
+      total: total,
     });
-    res.status(200).json(orders);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
