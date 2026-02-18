@@ -11,8 +11,11 @@ exports.createOrder = async (req, res) => {
 
     for (const item of items) {
       const product = await Product.findByPk(item.id);
-      if (!product)
-        return res.status(404).json({ message: "Product not found" });
+      if (!product) {
+        return res
+          .status(404)
+          .json({ message: `Product not found: ${item.id}` });
+      }
 
       itemsForCalc.push({ price: product.price, quantity: item.quantity });
 
@@ -23,12 +26,14 @@ exports.createOrder = async (req, res) => {
       });
     }
 
-    const { total } = calculateTotal(itemsForCalc);
+    const { total: subtotal } = calculateTotal(itemsForCalc);
+    const deliveryFee = 45;
+    const finalTotal = subtotal + deliveryFee;
 
     const order = await Order.create({
       UserId: userId,
-      totalAmount: total,
-      address,
+      totalAmount: finalTotal,
+      address: address || "Anfa, Gauthier Casablanca",
       status: "pending",
     });
 
@@ -41,7 +46,12 @@ exports.createOrder = async (req, res) => {
     res.status(201).json({
       message: "Order confirmed! 🚀",
       orderId: order.id,
-      total: total,
+      paymentSummary: {
+        subtotal,
+        deliveryFee,
+        total: finalTotal,
+      },
+      status: order.status,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -57,10 +67,11 @@ exports.getUserOrders = async (req, res) => {
       include: [
         {
           model: OrderItem,
+          attributes: ["quantity", "price"],
           include: [
             {
               model: Product,
-              attributes: ["name", "price", "category"],
+              attributes: ["name", "image", "category"],
             },
           ],
         },
@@ -69,6 +80,39 @@ exports.getUserOrders = async (req, res) => {
     });
 
     res.status(200).json(orders);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.updateOrderStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const order = await Order.findByPk(id);
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    order.status = status;
+    await order.save();
+
+    res.status(200).json({
+      message: `Order status updated to ${status} ✅`,
+      order,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.getAllProducts = async (req, res) => {
+  try {
+    const products = await Product.findAll({
+      attributes: ["id", "name", "price", "image"],
+    });
+    res.status(200).json(products);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
