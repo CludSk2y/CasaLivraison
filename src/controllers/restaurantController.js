@@ -1,3 +1,14 @@
+const { Restaurant, Product } = require("../models");
+
+exports.createRestaurant = async (req, res) => {
+  try {
+    const restaurant = await Restaurant.create(req.body);
+    res.status(201).json(restaurant);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
 exports.getMenu = async (req, res) => {
   try {
     const restaurant = await Restaurant.findOne({

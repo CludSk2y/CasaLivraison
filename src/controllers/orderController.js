@@ -1,10 +1,10 @@
 const { Order, OrderItem, Product } = require("../models");
-const calculateTotal = require("../utils/calculateTotal"); 
+const calculateTotal = require("../utils/calculateTotal");
 
 exports.createOrder = async (req, res) => {
   try {
     const { items, address } = req.body;
-    const userId = req.user.id; 
+    const userId = req.user.id;
 
     let orderItemsData = [];
     let itemsForCalc = [];
@@ -23,7 +23,7 @@ exports.createOrder = async (req, res) => {
       });
     }
 
-    const { subtotal, deliveryFee, total } = calculateTotal(itemsForCalc);
+    const { total } = calculateTotal(itemsForCalc);
 
     const order = await Order.create({
       UserId: userId,
@@ -43,6 +43,32 @@ exports.createOrder = async (req, res) => {
       orderId: order.id,
       total: total,
     });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.getUserOrders = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const orders = await Order.findAll({
+      where: { UserId: userId },
+      include: [
+        {
+          model: OrderItem,
+          include: [
+            {
+              model: Product,
+              attributes: ["name", "price", "category"],
+            },
+          ],
+        },
+      ],
+      order: [["createdAt", "DESC"]],
+    });
+
+    res.status(200).json(orders);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

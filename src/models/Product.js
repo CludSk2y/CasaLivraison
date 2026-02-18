@@ -7,25 +7,18 @@ const Product = sequelize.define("Product", {
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
   },
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false, 
-  },
-  price: {
-    type: DataTypes.FLOAT,
-    allowNull: false, 
-  },
-  description: {
-    type: DataTypes.TEXT, 
-  },
-  category: {
-    type: DataTypes.STRING, 
-  },
-  image: {
-    type: DataTypes.STRING,
-  },
-  preparationTime: {
-    type: DataTypes.STRING, 
+  name: { type: DataTypes.STRING, allowNull: false },
+  price: { type: DataTypes.FLOAT, allowNull: false },
+  description: { type: DataTypes.TEXT },
+  image: { type: DataTypes.STRING },
+  category: { type: DataTypes.STRING },
+  restaurantId: {
+    type: DataTypes.UUID,
+    allowNull: true,
+    references: {
+      model: "Restaurants",
+      key: "id",
+    },
   },
 });
 
