@@ -3,6 +3,8 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     const restaurantId = "b3481da0-9460-4e0c-b3a3-e93e0d577944";
+    const userId = "a1111111-2222-3333-4444-555555555555";
+    const orderId = "f5d50b9a-1234-5678-9101-112131415161";
 
     await queryInterface.bulkInsert("Restaurants", [
       {
@@ -18,7 +20,7 @@ module.exports = {
       },
     ]);
 
-    return queryInterface.bulkInsert("Products", [
+    await queryInterface.bulkInsert("Products", [
       {
         id: "8cb71d07-6c20-4556-99cb-2a8d25a6ffeb",
         name: "Truffle-Infused Burrata",
@@ -26,7 +28,7 @@ module.exports = {
         category: "Starters",
         restaurantId: restaurantId,
         description:
-          "Creamy artisan Burrata, black truffle  essence, and aged balsamic glaze.",
+          "Creamy artisan Burrata, black truffle essence, and aged balsamic glaze.",
         image: "https://i.ibb.co/39Yb5G8y/Truffle-Infused-Burrata-png.jpg",
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -66,9 +68,41 @@ module.exports = {
         updatedAt: new Date(),
       },
     ]);
+
+    await queryInterface.bulkInsert("Users", [
+      {
+        id: userId,
+        username: "testuser",
+        email: "test@example.com",
+        password: "hashed_password_example",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ]);
+
+    await queryInterface.bulkInsert("Orders", [
+      {
+        id: orderId,
+        UserId: userId,
+        totalAmount: 145.0,
+        address: "Anfa, Gauthier Casablanca",
+        status: "on_the_way",
+        deliveryLat: 33.5824,
+        deliveryLng: -7.6325,
+        livreurName: "Karim",
+        livreurPhone: "0600112233",
+        livreurImage: "https://i.ibb.co/S7sPJ3rW/livreure-png.jpg",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ]);
+
+    return;
   },
 
   down: async (queryInterface, Sequelize) => {
+    await queryInterface.bulkDelete("Orders", null, {});
+    await queryInterface.bulkDelete("Users", null, {});
     await queryInterface.bulkDelete("Products", null, {});
     await queryInterface.bulkDelete("Restaurants", null, {});
   },

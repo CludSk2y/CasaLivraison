@@ -1,5 +1,5 @@
 const express = require("express");
-const cors = require("cors"); // 1. ضروري للاتصال مع الـ Frontend
+const cors = require("cors"); 
 const path = require("path");
 const app = express();
 

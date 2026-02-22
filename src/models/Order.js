@@ -16,8 +16,30 @@ const Order = sequelize.define("Order", {
     allowNull: false,
   },
   status: {
-    type: DataTypes.ENUM("pending", "preparing", "delivered", "cancelled"),
+    type: DataTypes.ENUM(
+      "pending", 
+      "preparing", 
+      "on_the_way", 
+      "delivered",
+      "cancelled", 
+    ),
     defaultValue: "pending",
+  },
+  deliveryLat: {
+    type: DataTypes.FLOAT,
+    allowNull: true,
+  },
+  deliveryLng: {
+    type: DataTypes.FLOAT,
+    allowNull: true,
+  },
+  livreurName: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  livreurPhone: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
 });
 

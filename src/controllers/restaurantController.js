@@ -1,5 +1,16 @@
 const { Restaurant, Product } = require("../models");
 
+exports.getAllRestaurants = async (req, res) => {
+  try {
+    const restaurants = await Restaurant.findAll();
+    res.status(200).json(restaurants);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error fetching restaurants", error: error.message });
+  }
+};
+
 exports.createRestaurant = async (req, res) => {
   try {
     const restaurant = await Restaurant.create(req.body);
